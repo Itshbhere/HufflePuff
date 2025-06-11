@@ -1,14 +1,15 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.8.20;
 
 import {HorseStore} from "../../src/HorseStoreV1/HorseStore.sol";
+import {IHorseStore} from "../../src/HorseStoreV1/IHorseStore.sol";
 import {Test, console} from "forge-std/Test.sol";
 
 abstract contract Base_TestV1 is Test {
-    HorseStore public horseStore;
+    IHorseStore public horseStore;
 
     function setUp() public virtual {
-        horseStore = new HorseStore();
+        horseStore = IHorseStore(address(new HorseStore()));
     }
 
     function testReadValue() public {
@@ -24,6 +25,6 @@ abstract contract Base_TestV1 is Test {
     function testWriteValue(uint256 test2value) public {
         horseStore.updateHorseNumber(test2value);
         uint256 initialValue = horseStore.readNumberOfHorses();
-        assertNotEq(initialValue, 69);
+        assertEq(initialValue, test2value);
     }
 }
