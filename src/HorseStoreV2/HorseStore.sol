@@ -27,7 +27,7 @@ contract HorseStore is IHorseStore, ERC721Enumerable {
 
     /* 
      * @param horseId the id of the horse to feed
-     * @notice allows anyone to feed anyone else's horse. 
+     * @notice allows anyone to feed anyone else's horse.
      * 
      * @audit-medium: Feeding unminted horeses is currently allowed! 
      */

@@ -1,0 +1,83 @@
+#define function setNumber(uint256) nonpayable returns()
+#define function getNumber() view returns(uint256)
+#define function increment() nonpayable returns()
+#define function reset() nonpayable returns()
+
+#define constant Number_Storage_Slot = FREE_STORAGE_POINTER()
+#define constant Number_1 = 0x0000000000000000000000000000000000000000000000000000000000000001
+#define constant Number_0 = 0x0000000000000000000000000000000000000000000000000000000000000000
+
+#define macro MAIN() = takes(0) returns (0){
+
+    0x00
+    calldataload
+    0xE0
+    shr                         //[FunctionSelector]
+
+    dup1                        //[FunctionSelector , FunctionSelector]
+    __FUNC_SIG(setNumber)       //[SetNumber , FunctionSelector , FunctionSelector]
+    eq                          //[SetNumber == FunctionSelector , FunctionSelector]
+    setnumber jumpi             //[FunctionSelector]
+
+    dup1                        //[FunctionSelector , FunctionSelector]
+    __FUNC_SIG(getNumber)       //[GetNumber , FunctionSelector , FunctionSelector]
+    eq                          //[GetNumber == FunctionSelector , FunctionSelector]
+    getnumber jumpi             //[FunctionSelector]
+
+    dup1                        //[FunctionSelector , FunctionSelector]
+    __FUNC_SIG(increment)       //[increment , FunctionSelector , FunctionSelector]
+    eq                          //[increment == FunctionSelector , FunctionSelector]
+    Increment jumpi             //[FunctionSelector]
+
+    __FUNC_SIG(reset)           //[Reset , FunctionSelector]
+    eq                          //[Reset == FunctionSelector ]
+    Reset jumpi                 //[]
+
+    0x00 0x00 revert
+
+    setnumber:
+        SET_NUMBER()
+    getnumber:
+        GET_NUMBER()
+    Increment:
+        INCREMENT()
+    Reset:
+        RESET()
+}
+
+#define macro SET_NUMBER() = takes(0) returns(0){
+    0x04
+    calldataload                    //[Number]
+    [Number_Storage_Slot]           //[StorageSlot , Number]
+    sstore
+    stop
+}
+
+#define macro GET_NUMBER() = takes(0) returns(0){
+    [Number_Storage_Slot]           //[StorageSlot]
+    sload                           //[Number]   
+    0x00                            //[0 , Number]
+    mstore                          //[] Memory[Number]
+    0x20 0x00 return
+}
+
+#define macro INCREMENT() = takes(0) returns(0){
+    [Number_Storage_Slot]           //[StorageSlot]
+    sload                           //[Number] 
+    [Number_1]                      //[1,Number]
+    add                             //[1 + Number]
+    [Number_Storage_Slot]           //[StorageSlot , 1 + Number]
+    sstore
+    stop
+}
+
+#define macro RESET() = takes(0) returns(0){
+    [Number_0]                   //[0]
+    [Number_Storage_Slot]        //[StorageSlot , 0]
+    sstore
+    stop
+}
+
+
+
+
